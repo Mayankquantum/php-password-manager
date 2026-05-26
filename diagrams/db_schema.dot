@@ -1,0 +1,30 @@
+digraph DB {
+    rankdir=LR;
+    bgcolor="white";
+    node [shape=plaintext fontname="Helvetica" fontsize=11];
+    edge [fontname="Helvetica" fontsize=10];
+
+    users [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="5" bgcolor="#eef2ff">
+      <tr><td colspan="2" bgcolor="#c7d2fe"><b>users</b></td></tr>
+      <tr><td align="left"><b>PK</b></td><td align="left"><b>id</b> : INT  AUTO_INCREMENT</td></tr>
+      <tr><td align="left">U</td><td align="left">login : VARCHAR(64)  UNIQUE</td></tr>
+      <tr><td align="left"></td><td align="left">password_hash : VARCHAR(255)</td></tr>
+      <tr><td align="left"></td><td align="left">encrypted_key : TEXT</td></tr>
+      <tr><td align="left"></td><td align="left">key_salt : VARCHAR(64)</td></tr>
+      <tr><td align="left"></td><td align="left">created_at : TIMESTAMP</td></tr>
+    </table>>];
+
+    password_entries [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="5" bgcolor="#eafaf1">
+      <tr><td colspan="2" bgcolor="#a7f3d0"><b>password_entries</b></td></tr>
+      <tr><td align="left"><b>PK</b></td><td align="left"><b>id</b> : INT  AUTO_INCREMENT</td></tr>
+      <tr><td align="left"><b>FK</b></td><td align="left">user_id : INT</td></tr>
+      <tr><td align="left"></td><td align="left">service_name : VARCHAR(128)</td></tr>
+      <tr><td align="left"></td><td align="left">secret_enc : TEXT</td></tr>
+      <tr><td align="left"></td><td align="left">created_at : TIMESTAMP</td></tr>
+    </table>>];
+
+    // One user has many entries (1 .. *)
+    users -> password_entries [arrowhead=crow arrowtail=none dir=both taillabel="1" headlabel="*" label="  has  " color="#374151"];
+}

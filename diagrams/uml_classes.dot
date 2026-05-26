@@ -1,0 +1,59 @@
+digraph UML {
+    rankdir=BT;
+    bgcolor="white";
+    node [shape=plaintext fontname="Helvetica" fontsize=11];
+    edge [fontname="Helvetica" fontsize=10];
+
+    Database [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#eef2ff">
+      <tr><td bgcolor="#c7d2fe"><b>Database</b><br/><i>&lt;&lt;singleton&gt;&gt;</i></td></tr>
+      <tr><td align="left">- instance : Database<br align="left"/>- pdo : PDO<br align="left"/></td></tr>
+      <tr><td align="left">+ getInstance() : Database<br align="left"/>+ pdo() : PDO<br align="left"/></td></tr>
+    </table>>];
+
+    Crypto [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#eef2ff">
+      <tr><td bgcolor="#c7d2fe"><b>Crypto</b><br/><i>&lt;&lt;utility&gt;&gt;</i></td></tr>
+      <tr><td align="left">- CIPHER = aes-256-gcm<br align="left"/>- KDF_ITERATIONS = 200000<br align="left"/></td></tr>
+      <tr><td align="left">+ randomKey(bytes) : string<br align="left"/>+ deriveKey(pw, salt) : string<br align="left"/>+ encrypt(text, key) : string<br align="left"/>+ decrypt(blob, key) : string<br align="left"/></td></tr>
+    </table>>];
+
+    PasswordGenerator [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#eef2ff">
+      <tr><td bgcolor="#c7d2fe"><b>PasswordGenerator</b></td></tr>
+      <tr><td align="left">- lowercase : int<br align="left"/>- uppercase : int<br align="left"/>- digits : int<br align="left"/>- special : int<br align="left"/>- length : ?int<br align="left"/></td></tr>
+      <tr><td align="left">+ __construct(l, u, d, s, len)<br align="left"/>+ fromPercentages(...) : self<br align="left"/>+ generate() : string<br align="left"/>- take(chars, set, n) : void<br align="left"/>- shuffle(chars) : void<br align="left"/></td></tr>
+    </table>>];
+
+    Model [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#fef9e7">
+      <tr><td bgcolor="#fde68a"><b><i>Model</i></b><br/><i>&lt;&lt;abstract&gt;&gt;</i></td></tr>
+      <tr><td align="left"># pdo : PDO<br align="left"/></td></tr>
+      <tr><td align="left">+ table() : string  {abstract}<br align="left"/># insertRow(cols) : int<br align="left"/># select(where, params) : array<br align="left"/></td></tr>
+    </table>>];
+
+    User [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#eafaf1">
+      <tr><td bgcolor="#a7f3d0"><b>User</b></td></tr>
+      <tr><td align="left">(maps to table: users)<br align="left"/></td></tr>
+      <tr><td align="left">+ table() : string<br align="left"/>+ register(login, pw) : int<br align="left"/>+ authenticate(login, pw) : ?array<br align="left"/>+ changeMasterPassword(id, old, new) : void<br align="left"/>+ findByLogin(login) : ?array<br align="left"/></td></tr>
+    </table>>];
+
+    PasswordEntry [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#eafaf1">
+      <tr><td bgcolor="#a7f3d0"><b>PasswordEntry</b></td></tr>
+      <tr><td align="left">(maps to table: password_entries)<br align="left"/></td></tr>
+      <tr><td align="left">+ table() : string<br align="left"/>+ add(userId, service, secret, key) : int<br align="left"/>+ listForUser(userId, key) : array<br align="left"/>+ delete(id, userId) : void<br align="left"/></td></tr>
+    </table>>];
+
+    // Inheritance (hollow triangle, points to parent)
+    edge [arrowhead=onormal style=solid color="#374151"];
+    User -> Model;
+    PasswordEntry -> Model;
+
+    // Dependencies (dashed, "uses")
+    edge [arrowhead=vee style=dashed color="#6b7280"];
+    Model -> Database [label="uses"];
+    User -> Crypto [label="uses"];
+    PasswordEntry -> Crypto [label="uses"];
+}
